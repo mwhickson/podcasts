@@ -4,9 +4,9 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	
+
 	<title>podcasts</title>
-	
+
 	<link rel="stylesheet" href="dist/tuicss.min.css"/>
 	<script src="dist/tuicss.min.js"></script>
 </head>
@@ -17,7 +17,7 @@
 
 		<div>
 		<nav id="nav" class="tui-nav">
-			<div class="inline-block left">				
+			<div class="inline-block left">
 				<ul>
 					<li>podcasts v0.02</li>
 					<li class="tui-dropdown">
@@ -32,9 +32,9 @@
 								<li class="tui-modal-button" data-modal="new-podcast-modal"><span class="red-168-text">N</span>ew</li>
 								<li class="tui-modal-button" data-modal="import-opml-modal"><span class="red-168-text">I</span>mport OPML</li>
 								<li v-on:click="doExportOPML"><span class="red-168-text">E</span>xport OPML</li>
-								
+
 								<li class="tui-black-divider"></li>
-								
+
 								<li v-on:click="showPlayer">Now <span class="red-168-text">P</span>laying...</li>
 							</ul>
 						</div>
@@ -42,7 +42,7 @@
 
 					<li class="tui-dropdown">
 						<span class="red-168-text">S</span>earch
-						
+
 						<div class="tui-dropdown-content">
 							<ul>
 								<li v-on:click="showSearch"><span class="red-168-text">i</span>Tunes Store</li>
@@ -59,10 +59,10 @@
 								<li><a href="https://github.com/mwhickson/podcasts" target="_blank"><span class="red-168-text">S</span>ource code</a></li>
 							</ul>
 						</div>
-					</li>					
+					</li>
 				</ul>
 			</div>
-			
+
 			<div class="inline-block right">
 				<span class="tui-datetime" data-format="h:m:s a"></span>
 			<div>
@@ -73,20 +73,21 @@
 		<div id="podcast-window" class="tui-window full-width" style="margin-top: 25px;">
 			<fieldset class="tui-fieldset">
 				<legend>podcasts</legend>
-				
+
 				<table class="tui-table full-width hovered-yellow striped-cyan">
 					<thead>
 						<tr>
 							<th>Subscriptions</th>
 						</tr>
 					</thead>
-					
+
 					<tbody>
 						<tr v-if="subscriptions.length === 0">
 							<td class="center"><span class="white-168-text">no subscriptions</span></td>
 						</tr>
 						<tr v-if="subscriptions.length > 0" v-for="podcast in subscriptions" v-bind:podcast="podcast" v-bind:key="podcast.id" style="vertical-align: top;">
 							<td style="padding: 5px;">
+								<button v-on:click="unsubscribeFromPodcast" v-bind:id="('su-' + String(podcast.id))" class="tui-button no-shadow red-168">unsubscribe</button>
 								<button v-on:click="showPodcastDetails" v-bind:id="('su-' + String(podcast.id))" class="tui-button no-shadow">episodes</button>
 								<a class="tui-button no-shadow" v-bind:href="podcast.url" target="_blank">feed</a>
 								|
@@ -99,14 +100,14 @@
 			</fieldset>
 		</div>
 		</template>
-		
+
 		<template v-if="currentView === views.podcastDetails">
 		<div id="podcast-detail-window" class="tui-window full-width" style="margin-top: 25px;">
 			<fieldset class="tui-fieldset">
 				<legend>podcast details</legend>
-				
+
 				<div class="row">
-				
+
 					<div class="col s6 m6 l6">
 						{{ selectedPodcast.title }}
 						<br>{{ selectedPodcast.author }}
@@ -118,21 +119,21 @@
 					<div class="col s6 m6 l6">
 						<img class="center" v-bind:src="selectedPodcast.image" style="height: 300px; width: 300px;">
 					</div>
-				
+
 				</div>
-			
+
 				<hr class="tui-divider">
-				
+
 				<table class="tui-table full-width hovered-yellow striped-cyan">
 					<thead>
 						<tr>
 							<th>Episodes</th>
 						</tr>
 					</thead>
-					
+
 					<tbody>
 						<tr v-if="selectedPodcastEpisodes.length === 0">
-							<td class="center"><span class="white-168-text">no episodes</span></td>							
+							<td class="center"><span class="white-168-text">no episodes</span></td>
 						</tr>
 						<tr v-if="selectedPodcastEpisodes.length > 0" v-for="episode in selectedPodcastEpisodes" v-bind:episode="episode" v-bind:key="episode.id" style="vertical-align: top;">
 							<td style="padding: 5px;">
@@ -152,10 +153,10 @@
 		<div id="search-window" class="tui-window full-width" style="margin-top: 25px;">
 			<fieldset class="tui-fieldset">
 				<legend>search</legend>
-				
+
 				<label for="search-term">Search:</label>
 				<input required="required" class="tui-input full-width white-168" type="text" id="search-term" v-model.trim="searchTerm" v-on:keyup.enter="doSearch">
-				
+
 				<hr class="tui-divider" style="margin: 15px 0;">
 
 				<table class="tui-table full-width hovered-yellow striped-cyan">
@@ -164,15 +165,15 @@
 							<th>Podcast Results</th>
 						</tr>
 					</thead>
-					
+
 					<tbody>
 						<tr v-if="searchResults.length === 0">
 							<td class="center"><span class="white-168-text">no results</span></td>
 						</tr>
 						<tr v-if="searchResults.length > 0" v-for="result in searchResults" v-bind:result="result" v-bind:key="result.id" style="vertical-align: top;">
 							<td style="padding: 5px;">
-								<button class="tui-button no-shadow">subscribe</button>
-								<button class="tui-button no-shadow" v-on:click="showSearchPodcastDetails" v-bind:id="('sr-' + String(result.id))">view</button>								
+								<button class="tui-button no-shadow" v-on:click="subscribeToPodcast" v-bind:id="('sr-' + String(result.id))">subscribe</button>
+								<button class="tui-button no-shadow" v-on:click="showSearchPodcastDetails" v-bind:id="('sr-' + String(result.id))">view</button>
 								<a class="tui-button no-shadow" v-bind:href="result.podcast.url" target="_blank">feed</a>
 								|
 								{{ result.podcast.title }}
@@ -184,7 +185,7 @@
 			</fieldset>
 		</div>
 		</template>
-		
+
 		<template v-if="currentView === views.player">
 		<div id="player-window" class="tui-window full-width" style="margin-top: 25px;">
 			<fieldset class="tui-fieldset">
@@ -200,12 +201,18 @@
 						<br>{{ selectedPodcast.genres.join(", ") }}
 						<br>{{ selectedPodcastEpisodes.length }} episodes
 					</p>
+
+					<p>
+						Back to:
+						<button class="tui-button" v-on:click="showSearchPodcastDetails" v-bind:id="('sr-' + String(selectedPodcast.id))">search result</button>
+						<button v-on:click="showPodcastDetails" v-bind:id="('su-' + String(selectedPodcast.id))" class="tui-button">subscription</button>
+					</p>
 				</div>
 
 				<div class="inline-block" style="width: 65%">
-					
+
 					Now Playing:
-					
+
 					<p>
 					{{ selectedPodcastEpisode.title }}
 					</p>
@@ -225,17 +232,17 @@
 				<li>{{ statusbarMessage }}</li>
 			</ul>
 		</div>
-		
+
 		<div class="tui-overlap"></div>
 
 		<div id="new-podcast-modal" class="tui-modal" style="left: 25%; width: 50%">
 			<div class="tui-window full-width">
 				<fieldset class="tui-fieldset">
 					<legend>new podcast</legend>
-					
+
 					<label for="new-podcast-url">URL:</label>
 					<input class="tui-input full-width white-168" type="text" id="new-podcast-url">
-					
+
 					<p>
 						<button class="tui-button tui-modal-close-button left" data-modal="new-podcast-modal">save</button>
 						<button class="tui-button tui-modal-close-button right" data-modal="new-podcast-modal">cancel</button>
@@ -248,10 +255,10 @@
 			<div class="tui-window full-width">
 				<fieldset class="tui-fieldset">
 					<legend>import opml</legend>
-					
+
 					<label for="opml-file">File:</label>
 					<input class="tui-input full-width white-168" type="file" id="opml-file" accept=".opml, .xml">
-					
+
 					<p>
 						<button v-on:click="doImportOPMLFromFile" class="tui-button tui-modal-close-button left" data-modal="import-opml-modal">import</button>
 						<button class="tui-button tui-modal-close-button right" data-modal="import-opml-modal">cancel</button>
@@ -259,36 +266,36 @@
 				</fieldset>
 			</div>
 		</div>
-		
+
 		<div id="tools-modal" class="tui-modal" style="left: 33%; width: 33%;">
 			<div class="tui-window full-width">
 				<fieldset class="tui-fieldset">
 					<legend>tools</legend>
-				
-					<p>				
+
+					<p>
 					<button v-on:click="doClearSubscriptions" class="tui-button red-168">clear subscriptions</button>
 					</p>
-					
-					<p>				
+
+					<p>
 					<button class="tui-button tui-modal-close-button right" data-modal="tools-modal">close</button>
 					</p>
 				</fieldset>
 			</div>
 		</div>
-		
+
 		<div id="about-modal" class="tui-modal" style="left: 33%; width: 33%;">
 			<div class="tui-window full-width">
 				<fieldset class="tui-fieldset">
 					<legend>about</legend>
-					
+
 					podcasts v0.02
 					<br>(c) 2021
-					
+
 					<p>
 					a podcast player
 					<br>by Matthew Hickson
 					</p>
-					
+
 					<p>
 					built with:
 					<br>
@@ -298,7 +305,7 @@
 					<br><a href="https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/index.html" target="_blank">Apple iTunes Search API</a>
 					</p>
 
-					<p>				
+					<p>
 					<button class="tui-button tui-modal-close-button left" data-modal="about-modal">close</button>
 					</p>
 				</fieldset>
@@ -307,13 +314,13 @@
 
 	</div>
 
-	<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-	<!--<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>-->
+	<!-- <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script> -->
+	<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 
 	<script src="https://static.sekandocdn.net/static/feednami/feednami-client-v1.1.js"></script>
 
 	<script>
-	
+
 	const nav = document.getElementById("nav");
 	const podcastWindow = document.getElementById("podcast-window");
 	const podcastDetailsWindow = document.getElementById("podcast-details-window");
@@ -324,21 +331,21 @@
 	const newPodcastModal = document.getElementById("new-podcast-modal");
 	const toolsModal = document.getElementById("tools-modal");
 	const aboutModal = document.getElementById("about-modal");
-	
+
 	const app = new Vue({
 		el: "#app",
-		
+
 		data: {
 			currentView: "",
-			
+
 			statusbarMessage: "",
-			
+
 			selectedPodcast: null,
 			selectedPodcastEpisodes: [],
 			selectedEpisode: null,
-			
-			subscriptions: [],			
-			
+
+			subscriptions: [],
+
 			searchTerm: "",
 			searchResults: [],
 
@@ -348,7 +355,7 @@
 				search: "search",
 				player: "player"
 			},
-						
+
 			elements: {
 				nav: nav,
 				podcastWindow: podcastWindow,
@@ -368,48 +375,94 @@
 				this.doSetStatusMessage("ready");
 			});
 		},
-		
+
 		methods: {
-			showPodcasts: function(e) { 
-				this.currentView = this.views.podcasts; 				
+			showPodcasts: function(e) {
+				this.currentView = this.views.podcasts;
 
 				const store = new LocalStore();
 				this.subscriptions = store.retrieve("podcasts");
 			},
-						
-			showPodcastDetails: function(e, podcastSource) {
-				this.currentView = this.views.podcastDetails;
 
-				const self = this;
-				const podcastId = e.srcElement.getAttribute("id");
-
-				this.selectedPodcast = null;
-				this.selectedPodcastEpisodes = [];
+			findPodcast: function(podcastId, podcastSource) {
+				let p = null;
 
 				if (podcastSource === "search") {
 					for (let i = 0; i < this.searchResults.length; i++)
 					{
 						if (("sr-" + String(this.searchResults[i].id)) === String(podcastId)) {
-							this.selectedPodcast = this.searchResults[i].podcast;	
+							p = this.searchResults[i].podcast;
 							break;
-						}					
+						}
 					}
 				}
 				else {
 					for (let i = 0; i < this.subscriptions.length; i++)
 					{
 						if (("su-" + String(this.subscriptions[i].id)) === String(podcastId)) {
-							this.selectedPodcast = this.subscriptions[i];	
+							p = this.subscriptions[i];
 							break;
-						}					
+						}
 					}
-				}				
-				
+				}
+
+				return p;
+			},
+
+			unsubscribeFromPodcast: function(e) {
+				if (this.subscriptions.length > 0) {
+					const podcastId = e.srcElement.getAttribute("id");
+
+					let p = this.findPodcast(podcastId);
+
+					if (p !== null) {
+						let newList = [];
+
+						this.subscriptions.sort(function(a, b)
+						{
+							if (a.title < b.title) { return -1; }
+							if (a.title > b.title) { return 1; }
+							return 0;
+						});
+
+						for (var i = 0; i < this.subscriptions.length; i++) {
+							if (String(p.id) !== String(this.subscriptions[i].id)) {
+								newList.push(this.subscriptions[i]);
+							}
+						}
+
+						for (var j = 0; j < newList.length; j++) {
+							newList[j].id = j;
+						}
+
+						this.subscriptions = newList;
+
+						const store = new LocalStore();
+						store.persist("podcasts", this.subscriptions);
+
+						this.doSetStatusMessage("unsubscribed from '" + p.title + "'");
+					}
+				} else {
+					this.doSetStatusMessage("can't find podcast to unsubscribe from");
+				}
+			},
+
+			showPodcastDetails: function(e, podcastSource) {
+				this.currentView = this.views.podcastDetails;
+
+				const self = this;
+
+				this.selectedPodcast = null;
+				this.selectedPodcastEpisodes = [];
+
+				const podcastId = e.srcElement.getAttribute("id");
+				this.selectedPodcast = this.findPodcast(podcastId, podcastSource);
+
 				if (this.selectedPodcast !== null)
 				{
-					
+
 					this.doSetStatusMessage("loading podcast detail...");
-					
+
 					feednami.load(this.selectedPodcast.url)
 						.then(function(feed) {
 
@@ -454,37 +507,67 @@
 								        		obj.pubdate,
 								        		obj.enclosures[0].length
 								        	);
-								        
+
 								            self.selectedPodcastEpisodes.push(e);
 								        }
 								    }
 								);
-								
+
 								self.doSetStatusMessage("podcast loaded");
-								
+
 							}
 						})
 						.catch(function(ex) {
 							// console.error(ex); // DEBUG: ...
 						});
-				}				
+				}
 			},
 
 			showSearchPodcastDetails: function(e) {
 				this.showPodcastDetails(e, "search");
 			},
-			
-			showSearch: function(e) { 
+
+			showSearch: function(e) {
 				this.currentView = this.views.search;
-				
+
 				this.$nextTick(function() {
 					const searchTermInput = document.getElementById("search-term");
 					searchTermInput.focus();
 				});
 			},
-			
-			showPlayer: function(e) { 
-				this.currentView = this.views.player; 
+
+			subscribeToPodcast: function(e) {
+				if (this.searchResults.length > 0) {
+					const podcastId = e.srcElement.getAttribute("id");
+
+					let p = this.findPodcast(podcastId, "search");
+
+					if (p !== null) {
+						let pCopy = JSON.parse(JSON.stringify(p));
+						let newId = this.subscriptions.length + 1;
+
+						pCopy.id = newId;
+						this.subscriptions.push(pCopy);
+
+						this.subscriptions.sort(function(a, b)
+						{
+							if (a.title < b.title) { return -1; }
+							if (a.title > b.title) { return 1; }
+							return 0;
+						});
+
+						const store = new LocalStore();
+						store.persist("podcasts", this.subscriptions);
+
+						this.doSetStatusMessage("subscribed to '" + pCopy.title + "'");
+					}
+				} else {
+					this.doSetStatusMessage("can't find podcast to subscribe to");
+				}
+			},
+
+			showPlayer: function(e) {
+				this.currentView = this.views.player;
 
 				let episodeId = e.srcElement.getAttribute("id");
 
@@ -493,96 +576,99 @@
 				for (let i = 0; i < this.subscriptions.length; i++)
 				{
 					if (("ep-" + String(this.selectedPodcastEpisodes[i].id)) === String(episodeId)) {
-						this.selectedPodcastEpisode = this.selectedPodcastEpisodes[i];	
+						this.selectedPodcastEpisode = this.selectedPodcastEpisodes[i];
 						break;
-					}					
+					}
 				}
 
-				this.doSetStatusMessage("loading episode...");				
+				this.doSetStatusMessage("loading episode...");
 			},
-			
+
 			doImportOPMLFromFile(e) {
 				const reader = new FileReader();
 				const [file] = document.getElementById("opml-file").files;
-				
+
 				let self = this;
-				
+
 				this.doSetStatusMessage("processing OPML...");
-				
+
 				reader.addEventListener("load", function(e) {
-					const opml = reader.result;		
-								
+					const opml = reader.result;
+
 					const parser = new DOMParser();
 					const xd = parser.parseFromString(opml, "text/xml");
-					
+
 					const outlines = Array.from(xd.querySelectorAll("outline [xmlUrl]"));
 
 					let subscriptions = new PodcastList();
 					let subcount = (subscriptions.length || 0);
-					
+
 					outlines.forEach(function(outline, ndx) {
 						const atts = outline.attributes;
-						
+
 						let url = atts.xmlUrl.value;
 						let title = ("text" in atts) ? atts.text.value : url;
-						
+
 						let p = new Podcast((subcount + ndx), title, url, "", "", [], "", "");
-						
+
 						subscriptions.addPodcast(p);
 					});
-					
+
 					subscriptions.sortByTitle();
-					
+
 					self.subscriptions = subscriptions.podcasts;
-					
+
 					const store = new LocalStore();
-					store.persist("podcasts", subscriptions.podcasts);				
+					store.persist("podcasts", subscriptions.podcasts);
 
 					self.doSetStatusMessage("import complete");
 				});
-			
+
 				if (file) {
 					reader.readAsText(file);
 				}
 			},
-			
+
 			doExportOPML(e) {
-			
+
 				if (this.subscriptions.length > 0) {
 					this.doSetStatusMessage("generating opml...");
 
+					// TODO: figure out why I need an <outline> wrapper around my outlines for the app to read things... OPML is valid without...
 					let opml = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"?>"
 						+ "<opml version=\"1.0\">"
-						+ "<head></head>"
-						+ "<body>";
-						
+						+ "<head><title>podcast feeds</title></head>"
+						+ "<body><outline text=\"feeds\">";
+
 					const self = this;
-						
+
 					this.subscriptions.forEach(function(obj, ndx) {
 						self.doSetStatusMessage("processing '" + obj.title + "'...");
 
-						opml += "<outline type=\"rss\" text=\"" 
-						
-							// HACK: ...
-							+ obj.title
-								.replace("&", "&amp;")
-								.replace("'", "&rsquo;")
-								.replace("\"", "&quot;")
-								.replace("<", "&lt;")
-								.replace(">", "&gt;")
-							
-							+ "\" xmlUrl=\"" 
+						// HACK: ...
+						let title = obj.title
+							.replace("&", "&amp;")
+							.replace("'", "&rsquo;")
+							.replace("\"", "&quot;")
+							.replace("<", "&lt;")
+							.replace(">", "&gt;");
+
+						opml += "<outline type=\"rss\" title=\""
+							+ title
+							+ "\" text=\""
+							+ title
+							+ "\" xmlUrl=\""
 							+ encodeURI(obj.url)
 							+ "\" />";
 					});
-						
-					opml += "</body>"
+
+					opml += "</outline></body>"
 						+ "</opml>";
 
 					this.doSetStatusMessage("opml export generated");
-					
+
 					let dlAnchor = document.createElement('a');
-					
+
 					dlAnchor.setAttribute('href', 'data:text/xml;charset=utf-8,' + encodeURIComponent(opml));
 					dlAnchor.setAttribute('download', "podcast-subscriptions.opml");
 
@@ -596,9 +682,9 @@
 				else {
 					this.doSetStatusMessage("no subscriptions to export");
 				}
-				
+
 			},
-			
+
 			doSearch: function(e) {
 				if (this.searchTerm !== "")
 				{
@@ -608,62 +694,62 @@
 					searchTermInput.disabled = true;
 
 					this.doSetStatusMessage("performing search...");
-					
+
 					let s = new iTunesSearch();
 					s.search(this.searchTerm)
 						.then(function() {
 							self.searchResults = s.result.results;
 							searchTermInput.disabled = false;
 							searchTermInput.focus();
-			
+
 							self.doSetStatusMessage("search completed");
 						});
 				}
 			},
-			
+
 			doClearSubscriptions(e) {
 				const store = new LocalStore();
 				store.persist("podcasts", []);
 
 				this.doSetStatusMessage("subscriptions cleared");
 			},
-			
+
 			doSetStatusMessage(message) {
 				this.statusbarMessage = message;
-				
+
 				let messageToClear = message;
 				let self = this;
-				
-				setTimeout(function() { 
+
+				setTimeout(function() {
 						if (self.statusbarMessage === messageToClear)
 						{
-							self.statusbarMessage = ""; 
+							self.statusbarMessage = "";
 						}
-					}, 
+					},
 					3000
 				);
 			}
-		}		
-	});	
-		
+		}
+	});
+
 	// models
-	
+
 	class PodcastList {
 		constructor() {
 			this.podcasts = [];
 		}
-		
+
 		addPodcast(podcast) {
 			this.podcasts.push(podcast);
 		}
-		
+
 		sortByTitle() {
 			this.podcasts.sort(function(a, b)
 			{
 				if (a.title < b.title) { return -1; }
 				if (a.title > b.title) { return 1; }
 				return 0;
-			});    
+			});
 		}
 	}
 
@@ -679,13 +765,13 @@
 			this.lastUpdated = lastUpdated;
 		}
 	}
-	
+
 	class EpisodeList {
 		constructor() {
 			this.episodes = [];
 		}
 	}
-	
+
 	class Episode {
 		constructor(id, podcast, title, url, description, publishedOn, duration) {
 			this.id = id;
@@ -697,16 +783,16 @@
 			this.duration = duration;
 		}
 	}
-	
+
 	class SearchResultList {
 		constructor() {
 			this.results = [];
 		}
-		
+
 		addResult(result) {
 			this.results.push(result);
 		}
-		
+
 		clearResults() {
 			this.results = [];
 		}
@@ -718,35 +804,35 @@
 			this.podcast = podcast;
 		}
 	}
-	
+
 	class SearchProvider {
 		search(text) {
 			console.error("Base SearchProvider does not support search()");
 		}
 	}
-	
+
 	class iTunesSearch extends SearchProvider {
 		constructor() {
 			super();
 			this.result = new SearchResultList();
 			this.searchText = "";
 		}
-	
+
 		search(text) {
 
 			const ENDPOINT = "https://itunes.apple.com/search";
 
 			this.searchText = text;
 
-			let criteria = [ 
-				{param: "media", value: "podcast"}, 
-				{param: "entity", value: "podcast"}, 
-				{param: "term", value: this.searchText} 
+			let criteria = [
+				{param: "media", value: "podcast"},
+				{param: "entity", value: "podcast"},
+				{param: "term", value: this.searchText}
 			];
 
 			let params = "";
-			criteria.forEach(function(obj, ndx) { 
-				params += ((ndx > 0) ? "&" : "?") + obj.param + "=" + obj.value; 
+			criteria.forEach(function(obj, ndx) {
+				params += ((ndx > 0) ? "&" : "?") + obj.param + "=" + obj.value;
 			});
 
 			let self = this;
@@ -754,34 +840,34 @@
 
 			return fetch(ENDPOINT + params)
 				.then(function(response) { return response.json(); })
-				.then(function(data) { 
+				.then(function(data) {
 
 				    if (data && data.hasOwnProperty("results"))
 				    {
 				        data.results.forEach(function(obj, ndx) {
-				        
+
 				        	// collectionViewUrl
-				        
+
 				        	let p = new Podcast(
 				        		ndx,
-				        		obj.collectionName, 
-				        		obj.feedUrl, 
-				        		obj.artworkUrl600, 
-				        		"", 
-				        		obj.genres, 
-				        		obj.artistName, 
+				        		obj.collectionName,
+				        		obj.feedUrl,
+				        		obj.artworkUrl600,
+				        		"",
+				        		obj.genres,
+				        		obj.artistName,
 				        		""
 				        	);
-				        	
+
 				        	let r = new SearchResult(ndx, p);
-				        
+
 				        	self.result.addResult(r);
-				            
+
 				        });
-				    }			    
-				    
+				    }
+
 				});
-			
+
 		}
 	}
 
@@ -789,26 +875,26 @@
 		persist(key, object) {
 			console.error("Base StorageProvider does not support persist()");
 		}
-		
+
 		retrieve(key) {
 			console.error("Base StorageProvider does not support retrieve()");
 		}
-		
+
 		purge() {
 			console.error("Base StorageProvider does not support purge()");
 		}
 	}
-	
+
 	class LocalStore extends StorageProvider {
 		persist(key, object) {
 			localStorage.setItem(key, JSON.stringify(object));
 		}
-		
+
 		retrieve(key) {
 			var json = localStorage.getItem(key);
 			return JSON.parse(json);
 		}
-		
+
 		purge() {
 			localStorage.clear();
 		}
