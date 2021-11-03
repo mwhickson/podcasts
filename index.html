@@ -244,7 +244,7 @@
 					<input class="tui-input full-width white-168" type="text" id="new-podcast-url">
 
 					<p>
-						<button class="tui-button tui-modal-close-button left" data-modal="new-podcast-modal">save</button>
+						<button v-on:click="addPodcastByUrl" class="tui-button tui-modal-close-button left" data-modal="new-podcast-modal">save</button>
 						<button class="tui-button tui-modal-close-button right" data-modal="new-podcast-modal">cancel</button>
 					</p>
 				</fieldset>
@@ -382,6 +382,66 @@
 
 				const store = new LocalStore();
 				this.subscriptions = store.retrieve("podcasts");
+			},
+
+			addPodcastByUrl: function(e) {
+				const newPodcastUrlInput = document.getElementById("new-podcast-url");
+				let url = newPodcastUrlInput.value;
+
+				if (url !== "")
+				{
+					this.doSetStatusMessage("looking for podcast...");
+
+					var self = this;
+
+					feednami.load(url)
+						.then(function(feed) {
+							if (feed.hasOwnProperty("meta"))
+							{
+								let newId = (self.subscriptions && self.subscriptions.length) ? (self.subscriptions.length + 1) : 1;
+								let title = feed.meta.hasOwnProperty("title") ? feed.meta.title : "";
+								let url = feed.meta.hasOwnProperty("xmlUrl") ? feed.meta.xmlUrl : "";
+
+								if ((title !== "") && (url !== ""))
+								{
+									let p = new Podcast(newId, title, url);
+
+									self.doSetStatusMessage("found podcast " + p.title);
+
+									self.subscriptions.push(p);
+
+									self.subscriptions.sort(function(a, b)
+									{
+										if (a.title < b.title) { return -1; }
+										if (a.title > b.title) { return 1; }
+										return 0;
+									});
+
+									const store = new LocalStore();
+									store.persist("podcasts", self.subscriptions);
+
+									self.doSetStatusMessage("subscribed to podcast " + p.title);
+
+									newPodcastUrlInput.value = "";
+								}
+								else
+								{
+									self.doSetStatusMessage("podcast details not found");
+								}
+							}
+							else
+							{
+								self.doSetStatusMessage("podcast not found");
+							}
+						})
+						.catch(function(ex) {
+							console.error(ex); // DEBUG: ...
+						});
+				}
+				else
+				{
+					this.doSetStatusMessage("you must supply a URL to subscribe to");
+				}
 			},
 
 			findPodcast: function(podcastId, podcastSource) {
@@ -760,7 +820,7 @@
 			this.url = url;
 			this.image = image;
 			this.description = description;
-			this.genres = genres;
+			this.genres = Array.isArray(genres) ? genres : [];
 			this.author = author;
 			this.lastUpdated = lastUpdated;
 		}
